@@ -11,14 +11,14 @@ class LogInViewController: UIViewController {
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        scrollView.backgroundColor = .white
+        scrollView.backgroundColor = .systemBackground
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
     
     private lazy var contentView: UIView = {
         let contentView = UIView()
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .systemBackground
         contentView.translatesAutoresizingMaskIntoConstraints = false
         return contentView
     }()
@@ -45,11 +45,10 @@ class LogInViewController: UIViewController {
     
     private lazy var loginTextField: UITextField = {
         let textField = UITextField()
-        let appMyColor = UIColor(named: "myColor")
         textField.backgroundColor = .systemGray6
         textField.font = UIFont.systemFont(ofSize: 16)
         textField.indent(size: 10)
-        textField.tintColor = appMyColor
+        textField.tintColor = UIColor(named: "colorLogoButton")
         textField.placeholder = "Введите email"
         textField.layer.borderWidth = 0.5
         textField.layer.borderColor = UIColor.lightGray.cgColor
@@ -61,11 +60,10 @@ class LogInViewController: UIViewController {
     
     private lazy var passwordTextField: UITextField = {
         let textField = UITextField()
-        let appMyColor = UIColor(named: "myColor")
         textField.backgroundColor = .systemGray6
         textField.font = UIFont.systemFont(ofSize: 16)
         textField.indent(size: 10)
-        textField.tintColor = appMyColor
+        textField.tintColor = UIColor(named: "colorLogoButton")
         textField.placeholder = "Введите пароль"
         textField.clearButtonMode = .always
         textField.autocapitalizationType = .none
@@ -98,7 +96,7 @@ class LogInViewController: UIViewController {
         self.view.addGestureRecognizer(tapGesture)
         
         self.displayButton.addTarget(self,
-                                     action: #selector(performDisplayVC(parameterSender:)),
+                                     action: #selector(switchToMainTabBarController(parameterSender:)),
                                      for: .touchUpInside)
     }
     
@@ -123,7 +121,7 @@ class LogInViewController: UIViewController {
     }
     
     private func setupViews() {
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .systemBackground
         self.view.addSubview(self.scrollView)
         self.scrollView.addSubview(self.contentView)
         self.contentView.addSubview(self.logoImage)
@@ -199,9 +197,8 @@ class LogInViewController: UIViewController {
         self.passwordTextField.resignFirstResponder()
     }
     
-    @objc func performDisplayVC(parameterSender: Any) {
-        let profileViewController = ProfileViewController()
-        self.navigationController?.pushViewController(profileViewController, animated: true)
+    @objc func switchToMainTabBarController(parameterSender: Any) {
+        SceneDelegate.shared?.rootViewController.switchToMainTabBarController()
     }
 }
 
@@ -213,24 +210,3 @@ extension LogInViewController: UITextFieldDelegate {
         return true
     }
 }
-
-extension UITextField {
-    func indent(size: CGFloat) {
-        self.leftView = UIView(frame: CGRect(x: self.frame.minX,
-                                             y: self.frame.minY,
-                                             width: size,
-                                             height: self.frame.height))
-        self.leftViewMode = .always
-    }
-}
-
-extension UIImage {
-    func copy(alpha: CGFloat) -> UIImage? {
-        UIGraphicsBeginImageContextWithOptions(size, false, scale)
-        draw(at: CGPoint.zero, blendMode: .normal, alpha: alpha)
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return newImage
-    }
-}
-

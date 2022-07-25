@@ -30,14 +30,14 @@ class PostTableViewCell: UITableViewCell, UITextViewDelegate {
     
     lazy var separatorView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemGray5
+        view.backgroundColor = UIColor.customBackgroundAppOne
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
     lazy var borderView: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemGray4
+        view.backgroundColor = .systemGray3
         view.layer.cornerRadius = 15
         view.clipsToBounds = true
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -46,7 +46,7 @@ class PostTableViewCell: UITableViewCell, UITextViewDelegate {
     
     lazy var backView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor.customBackgroundAppTwo
         view.layer.cornerRadius = 15
         view.clipsToBounds = true
         view.layer.maskedCorners = [
@@ -70,7 +70,8 @@ class PostTableViewCell: UITableViewCell, UITextViewDelegate {
         config.imagePadding = 5
         config.buttonSize = .mini
         
-        config.baseForegroundColor = .darkGray
+         config.baseForegroundColor = UIColor.customBaseForegroundButton
+             
         button.configuration = config
         button.addTarget(self, action: #selector(tapLikeButton(parameterSender:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -80,7 +81,7 @@ class PostTableViewCell: UITableViewCell, UITextViewDelegate {
     private lazy var authorLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 20)
-        label.textColor = .black
+        label.textColor = .label
         label.numberOfLines = 2
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -91,6 +92,7 @@ class PostTableViewCell: UITableViewCell, UITextViewDelegate {
         let textView = UITextView()
         textView.textAlignment = .left
         textView.textContainerInset = .zero
+        textView.backgroundColor = UIColor.customBackgroundAppTwo
         textView.isScrollEnabled = false
         textView.isEditable = false
         textView.isSelectable = false
@@ -123,7 +125,7 @@ class PostTableViewCell: UITableViewCell, UITextViewDelegate {
                                                                               scale: .large))
         config.imagePadding = 5
         config.buttonSize = .mini
-        config.baseForegroundColor = .gray
+        config.baseForegroundColor = .systemGray
         button.configuration = config
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -168,13 +170,14 @@ class PostTableViewCell: UITableViewCell, UITextViewDelegate {
         isExpandedCell = false
         isSelectedLike = false
         self.likesButton.configuration?.baseBackgroundColor = .systemGray5
-        self.likesButton.configuration?.baseForegroundColor = .darkGray
+        self.likesButton.configuration?.baseForegroundColor = UIColor.customBaseForegroundButton
         self.likesButton.configuration?.image = UIImage(systemName: "suit.heart", withConfiguration: UIImage.SymbolConfiguration(pointSize: 14.0, weight: .bold, scale: .large))
     }
     
     private func setupView() {
         self.selectionStyle = .none
-        self.backgroundColor = .systemGray5
+        self.backgroundColor = UIColor(named: "colorCellTableView")
+        self.contentView.backgroundColor = UIColor.customBackgroundAppOne
         contentView.addSubview(self.separatorView)
         contentView.addSubview(self.borderView)
         self.borderView.addSubview(self.backView)
@@ -235,7 +238,7 @@ class PostTableViewCell: UITableViewCell, UITextViewDelegate {
             changedText += "... Еще "
             descriptionTextView.text = changedText
             let attributes: [NSAttributedString.Key: NSObject] = [
-                .foregroundColor: UIColor.black,
+                .foregroundColor: UIColor.label,
                 .font: UIFont.systemFont(ofSize: 14.0),
             ]
             let attributedString = NSMutableAttributedString(string: changedText, attributes: attributes)
@@ -261,8 +264,8 @@ class PostTableViewCell: UITableViewCell, UITextViewDelegate {
     }
     
     func clickedLikeSelectedCell() {
-        self.likesButton.configuration?.baseBackgroundColor = #colorLiteral(red: 0.9886392951, green: 0.9445171952, blue: 0.9435593486, alpha: 1)
-        self.likesButton.configuration?.baseForegroundColor = .red
+        self.likesButton.configuration?.baseBackgroundColor = UIColor.customBaseBackgroundButton
+        self.likesButton.configuration?.baseForegroundColor = .systemRed
         self.likesButton.configuration?.title = "\(Int((self.likesButton.configuration?.title)!)! + 1)"
         self.likesButton.configuration?.image = UIImage(systemName: "heart.fill",
                                                         withConfiguration: UIImage.SymbolConfiguration(pointSize: 14.0,
@@ -273,6 +276,7 @@ class PostTableViewCell: UITableViewCell, UITextViewDelegate {
 }
 
 extension PostTableViewCell: Setupable {
+    
     func setup(with viewModel: ViewModelProtocol) {
         guard let viewModel = viewModel as? ViewModel else { return }
         self.authorLabel.text = viewModel.author
@@ -284,11 +288,3 @@ extension PostTableViewCell: Setupable {
     }
 }
 
-extension UITapGestureRecognizer {
-    func didTapAttributedTextInTextView(textView: UITextView, inRange targetRange: NSRange) -> Bool {
-        let layoutManager = textView.layoutManager
-        let locationOfTouch = self.location(in: textView)
-        let index = layoutManager.characterIndex(for: locationOfTouch, in: textView.textContainer, fractionOfDistanceBetweenInsertionPoints: nil)
-        return NSLocationInRange(index, targetRange)
-    }
-}

@@ -8,6 +8,7 @@
 import UIKit
 
 class PhotoGallery {
+    
     var images = [UIImage]()
     
     init() {

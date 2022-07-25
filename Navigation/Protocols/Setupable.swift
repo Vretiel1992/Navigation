@@ -10,5 +10,6 @@ import UIKit
 protocol ViewModelProtocol {}
 
 protocol Setupable {
+    
     func setup(with viewModel: ViewModelProtocol)
 }

@@ -11,20 +11,14 @@ class PhotosTableViewCell: UITableViewCell {
     
     private lazy var backView: UIView = {
         let view = UIView()
-        view.clipsToBounds = true
-        view.layer.maskedCorners = [
-            .layerMinXMaxYCorner,
-            .layerMinXMinYCorner,
-            .layerMaxXMaxYCorner,
-            .layerMaxXMinYCorner
-        ]
+        view.backgroundColor = UIColor.customBackgroundAppTwo
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
     private lazy var photoLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .black
+        label.textColor = .label
         label.font = UIFont.systemFont(ofSize: 24, weight: .bold)
         label.text = "Фотографии"
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -35,7 +29,7 @@ class PhotosTableViewCell: UITableViewCell {
         let imageView = UIImageView()
         let image = UIImage(systemName: "arrow.right")
         imageView.image = image
-        imageView.tintColor = .black
+        imageView.tintColor = .label
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()

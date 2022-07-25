@@ -32,15 +32,10 @@ class PhotosViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .white
+//        self.view.backgroundColor = .systemBackground
         self.setupNavigationBar()
         self.setupView()
         self.setupConstraints()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.isHidden = false
     }
     
     private func setupNavigationBar() {

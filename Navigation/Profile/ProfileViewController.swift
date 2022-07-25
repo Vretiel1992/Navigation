@@ -17,7 +17,7 @@ final class ProfileViewController: UIViewController {
     private var heightViewConstraintBigProfileImageView: NSLayoutConstraint?
     
     private lazy var arrayTapLikeIndexPath: [IndexPath] = []
-    private lazy var heightHeaderInSection: CGFloat = 180
+    private lazy var heightHeaderInSection: CGFloat = 185
     private lazy var isExpanded = false
     private lazy var tapGestureRecognizer = UITapGestureRecognizer()
     private lazy var swipeUpGestureRecognizer = UISwipeGestureRecognizer()
@@ -27,7 +27,7 @@ final class ProfileViewController: UIViewController {
     private lazy var backgroundBigAvatarImageView: UIView = {
         var backgroundView = UIView()
         backgroundView.alpha = 0
-        backgroundView.backgroundColor = .white
+        backgroundView.backgroundColor = .systemBackground
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
         return backgroundView
     }()
@@ -49,7 +49,7 @@ final class ProfileViewController: UIViewController {
     private lazy var closeButtonBigAvatarView: UIImageView = {
         let closeButton = UIImageView()
         closeButton.image = UIImage(systemName: "xmark.app.fill")
-        closeButton.tintColor = .black
+        closeButton.tintColor = .label
         closeButton.alpha = 0
         closeButton.isUserInteractionEnabled = true
         closeButton.translatesAutoresizingMaskIntoConstraints = false
@@ -74,7 +74,7 @@ final class ProfileViewController: UIViewController {
         tableView.register(PhotosTableViewCell.self, forCellReuseIdentifier: "PhotosCell")
         tableView.register(ProfileHeaderView.self, forHeaderFooterViewReuseIdentifier: "Header")
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.backgroundColor = .systemGray5
+        tableView.backgroundColor = .systemBackground
         return tableView
     }()
     
@@ -88,25 +88,23 @@ final class ProfileViewController: UIViewController {
         self.setupGesture()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.isHidden = true
-    }
-    
     // MARK: - Private Methods
     
     private func setupNavigationBar() {
         self.navigationItem.title = ""
         self.navigationItem.backButtonTitle = "Назад"
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "logout"),
+                                                                style: .plain,
+                                                                target: self,
+                                                                action: #selector(logout(parameterSender:)))
     }
     
     private func setupView() {
-        self.view.backgroundColor = .systemGray5
-        
+        self.view.backgroundColor = .systemBackground
+        self.title = "Профиль"
         self.scrollImageView = ImageScrollView(frame: self.view.bounds)
         self.scrollImageView.backgroundColor = .black
         self.scrollImageView.alpha = 0
-        
         self.view.addSubview(self.tableView)
         self.view.addSubview(self.backgroundBigAvatarImageView)
         self.view.addSubview(self.bigAvatarImageView)
@@ -209,6 +207,19 @@ final class ProfileViewController: UIViewController {
             self.tabBarController?.tabBar.isHidden = false
         }
     }
+                                                                
+    @objc func logout(parameterSender: Any) {
+        let alert = UIAlertController(title: "Вы действительно хотите выйти из аккаунта?",
+                                      message: nil,
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Выйти",
+                                      style: .default,
+                                      handler: { action in
+            SceneDelegate.shared?.rootViewController.switchToLogInViewController()
+        }))
+        alert.addAction(UIAlertAction(title: "Отмена", style: .cancel))
+        self.present(alert, animated: true, completion: nil)
+    }
 }
 
 // MARK: - UITableViewDataSource
@@ -220,7 +231,7 @@ extension ProfileViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        section == 0 ? 1 : dataSource.count
+        section == 0 ? 1 : Post.data.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -237,7 +248,7 @@ extension ProfileViewController: UITableViewDataSource {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "DefaultCell", for: indexPath)
                 return cell
             }
-            let article = dataSource[indexPath.row]
+            let article = Post.data[indexPath.row]
             let viewModel = PostTableViewCell.ViewModel(author: article.author,
                                                         description: article.description,
                                                         image: article.image,
@@ -264,8 +275,8 @@ extension ProfileViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard section == 0 else { return nil }
-        let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "Header") as? ProfileHeaderView
-        view?.delegate = self
+        guard let view = tableView.dequeueReusableHeaderFooterView(withIdentifier: "Header") as? ProfileHeaderView else { return nil }
+        view.delegate = self
         return view
     }
     
@@ -290,7 +301,7 @@ extension ProfileViewController: UITableViewDelegate {
 extension ProfileViewController: ProfileHeaderViewProtocol {
     
     func didTapStatusButton(textFieldIsVisible: Bool, completion: @escaping () -> Void) {
-        heightHeaderInSection = textFieldIsVisible ? 230 : 180
+        heightHeaderInSection = textFieldIsVisible ? 235 : 185
         
         UIView.animate(withDuration: 0.3, delay: 0.0) {
             self.tableView.beginUpdates()
@@ -324,7 +335,7 @@ extension ProfileViewController: PostTableViewCellProtocol {
                     changedText += "... Еще "
                     cell.descriptionTextView.text = changedText
                     let attributes: [NSAttributedString.Key: NSObject] = [
-                        .foregroundColor: UIColor.black,
+                        .foregroundColor: UIColor.label,
                         .font: UIFont.systemFont(ofSize: 14.0),
                     ]
                     let attributedString = NSMutableAttributedString(string: changedText, attributes: attributes)
@@ -341,7 +352,7 @@ extension ProfileViewController: PostTableViewCellProtocol {
                     self.tableView.beginUpdates()
                     cell.descriptionTextView.text = changedText + "\n\nСкрыть текст "
                     let attributes: [NSAttributedString.Key: NSObject] = [
-                        .foregroundColor: UIColor.black,
+                        .foregroundColor: UIColor.label,
                         .font: UIFont.systemFont(ofSize: 14.0),
                     ]
                     let attributedString = NSMutableAttributedString(string: cell.descriptionTextView.text,
@@ -361,10 +372,9 @@ extension ProfileViewController: PostTableViewCellProtocol {
         cell.likesButton.tag = cell.likeButtonTag
         arrayTapLikeIndexPath.contains(IndexPath(row: cell.likesButton.tag, section: 1)) ? arrayTapLikeIndexPath = arrayTapLikeIndexPath.filter { $0 != IndexPath(row: cell.likesButton.tag, section: 1) } : arrayTapLikeIndexPath.append(IndexPath(row: cell.likesButton.tag, section: 1))
         if !cell.isSelectedLike {
-            cell.likesButton.configuration?.baseBackgroundColor = #colorLiteral(red: 0.9886392951, green: 0.9445171952, blue: 0.9435593486, alpha: 1)
-            cell.likesButton.configuration?.baseForegroundColor = .red
+            cell.likesButton.configuration?.baseBackgroundColor = UIColor.customBaseBackgroundButton
+            cell.likesButton.configuration?.baseForegroundColor = .systemRed
             cell.likesButton.configuration?.title = "\(Int((cell.likesButton.configuration?.title)!)! + 1)"
-            
             cell.likesButton.configuration?.image = UIImage(systemName: "heart.fill",
                                                             withConfiguration: UIImage.SymbolConfiguration(pointSize: 7.0,
                                                                                                            weight: .bold,
@@ -387,7 +397,7 @@ extension ProfileViewController: PostTableViewCellProtocol {
             }
         } else {
             cell.likesButton.configuration?.baseBackgroundColor = .systemGray5
-            cell.likesButton.configuration?.baseForegroundColor = .darkGray
+            cell.likesButton.configuration?.baseForegroundColor = UIColor.customBaseForegroundButton
             cell.likesButton.configuration?.title = "\(Int((cell.likesButton.configuration?.title)!)! - 1)"
             cell.likesButton.configuration?.image = UIImage(systemName: "suit.heart",
                                                             withConfiguration: UIImage.SymbolConfiguration(pointSize: 14.0,
@@ -409,5 +419,4 @@ extension ProfileViewController: PostTableViewCellProtocol {
         }
     }
 }
-
 

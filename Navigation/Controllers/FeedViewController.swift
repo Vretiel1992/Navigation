@@ -8,6 +8,9 @@
 import UIKit
 
 class FeedViewController: UIViewController {
+//    override var prefersStatusBarHidden: Bool {
+//        return true
+//    }
     
     var post = PostTitlePostVC(title: "Мой пост")
     
@@ -29,7 +32,8 @@ class FeedViewController: UIViewController {
     }
     
     private func setupView() {
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .systemBackground
+        self.navigationController?.navigationBar.prefersLargeTitles = true
         self.title = "Лента"
         self.navigationItem.backButtonTitle = ""
         self.view.addSubview(self.displayButton)

@@ -18,6 +18,13 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
     
     let tapGestureRecognizer = UITapGestureRecognizer()
     
+    private lazy var backView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.backgroundColor = .systemGray5
+        return view
+    }()
+    
     private lazy var avatarImageView: UIImageView = {
         let imageView = UIImageView()
         let profileImage = UIImage(named: "TimCook")
@@ -39,7 +46,7 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = .systemBlue
         button.layer.cornerRadius = 16
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .bold)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.layer.shadowOffset = CGSize(width: 4, height: 4)
         button.layer.shadowRadius = CGFloat(4.0)
@@ -53,8 +60,7 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Тим Кук"
         label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
-        label.textColor = .black
-        
+        label.textColor = .label
         return label
     }()
     
@@ -63,7 +69,7 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Установите статус..."
         label.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        label.textColor = .darkGray
+        label.textColor = .secondaryLabel
         return label
     }()
     
@@ -71,14 +77,15 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        textField.textColor = .black
-        textField.backgroundColor = .white
+        textField.textColor = .label
+        textField.tintColor = UIColor(named: "colorLogoButton")
+        textField.backgroundColor = UIColor.customBackgroundAppTwo
         textField.textAlignment = .center
         textField.clearButtonMode = .always
         textField.placeholder = "Введите текст"
         textField.layer.cornerRadius = 12
         textField.layer.borderWidth = 1.0
-        textField.layer.borderColor = UIColor.black.cgColor
+        textField.layer.borderColor = UIColor.darkGray.cgColor
         textField.isHidden = true
         return textField
     }()
@@ -109,11 +116,20 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
         self.setupView()
     }
     
+    override func layoutSubviews() {
+        let thickness = 2.0
+        let borderTop = CALayer()
+        borderTop.frame = CGRect(x: 0.0, y: 0.0, width: UIScreen.main.bounds.width, height: thickness)
+        borderTop.backgroundColor = UIColor.systemGray3.cgColor
+        self.backView.layer.addSublayer(borderTop)
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     private func setupView() {
+        self.addSubview(self.backView)
         self.addSubview(self.infoStackView)
         self.addSubview(self.setStatusButton)
         self.addSubview(self.statusTextField)
@@ -187,9 +203,14 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
     }
     
     private func setConstraints() {
-        let topConstraint = self.infoStackView.topAnchor.constraint(equalTo: self.topAnchor)
-        let leadingConstraint = self.infoStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20)
-        let trailingConstraint = self.infoStackView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20)
+        let topConstraintBackView = self.backView.topAnchor.constraint(equalTo: self.topAnchor)
+        let bottomConstraintBackView = self.backView.bottomAnchor.constraint(equalTo: self.bottomAnchor)
+        let leadingConstraintBackView = self.backView.leadingAnchor.constraint(equalTo: self.leadingAnchor)
+        let trailingConstraintBackView = self.backView.trailingAnchor.constraint(equalTo: self.trailingAnchor)
+        
+        let topConstraintInfoStackView = self.infoStackView.topAnchor.constraint(equalTo: self.topAnchor, constant: 5)
+        let leadingConstraintInfoStackView = self.infoStackView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20)
+        let trailingConstraintInfoStackView = self.infoStackView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -20)
         
         let imageViewAspectRatio = self.avatarImageView.heightAnchor.constraint(equalTo: self.avatarImageView.widthAnchor, multiplier: 1.0)
         
@@ -201,9 +222,13 @@ class ProfileHeaderView: UITableViewHeaderFooterView, UITextFieldDelegate {
         let heightButtonConstraint = self.setStatusButton.heightAnchor.constraint(equalToConstant: 50)
         
         NSLayoutConstraint.activate([
-            topConstraint,
-            leadingConstraint,
-            trailingConstraint,
+            topConstraintBackView,
+            bottomConstraintBackView,
+            leadingConstraintBackView,
+            trailingConstraintBackView,
+            topConstraintInfoStackView,
+            leadingConstraintInfoStackView,
+            trailingConstraintInfoStackView,
             imageViewAspectRatio,
             self.buttonTopConstraint,
             leadingButtonConstraint,
