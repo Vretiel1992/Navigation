@@ -10,7 +10,7 @@ import UIKit
 protocol PostTableViewCellProtocol: AnyObject {
     func didTapDescriptionTextView(cell: PostTableViewCell)
     func didTapLikeButton(cell: PostTableViewCell, completion: @escaping () -> Void)
-    func didTapPictureImageView(imageCell: UIImage)
+    func didTapPictureImageView(cell: PostTableViewCell)
 }
 
 class PostTableViewCell: UITableViewCell, UITextViewDelegate {
@@ -59,7 +59,7 @@ class PostTableViewCell: UITableViewCell, UITextViewDelegate {
         return view
     }()
     
-     lazy var likesButton: UIButton = {
+    lazy var likesButton: UIButton = {
         let button = UIButton()
         var config = UIButton.Configuration.gray()
         config.cornerStyle = .capsule
@@ -70,8 +70,8 @@ class PostTableViewCell: UITableViewCell, UITextViewDelegate {
         config.imagePadding = 5
         config.buttonSize = .mini
         
-         config.baseForegroundColor = UIColor.customBaseForegroundButton
-             
+        config.baseForegroundColor = UIColor.customBaseForegroundButton
+        
         button.configuration = config
         button.addTarget(self, action: #selector(tapLikeButton(parameterSender:)), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -107,13 +107,18 @@ class PostTableViewCell: UITableViewCell, UITextViewDelegate {
         return textView
     }()
     
-    private lazy var pictureView: UIImageView = {
+    lazy var pictureView: UIImageView = {
         let imageView = UIImageView()
+//        imageView.setContentHuggingPriority(UILayoutPriority(251), for: .horizontal)
+//        imageView.setContentHuggingPriority(UILayoutPriority(251), for: .vertical)
+//        imageView.setContentCompressionResistancePriority(UILayoutPriority(750), for: .horizontal)
+        imageView.setContentCompressionResistancePriority(UILayoutPriority(750), for: .vertical)
         imageView.contentMode = .scaleAspectFit
         imageView.isUserInteractionEnabled = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
+    
     
     private lazy var viewsButtonOff: UIButton = {
         let button = UIButton()
@@ -251,7 +256,7 @@ class PostTableViewCell: UITableViewCell, UITextViewDelegate {
         guard tapGestureDescriptionTextView === gestureRecognizer else { return }
         self.delegate?.didTapDescriptionTextView(cell: self)
     }
-
+    
     @objc private func tapLikeButton(parameterSender: Any) {
         self.delegate?.didTapLikeButton(cell: self) { [weak self] in
             self?.isSelectedLike.toggle()
@@ -260,7 +265,7 @@ class PostTableViewCell: UITableViewCell, UITextViewDelegate {
     
     @objc private func handleTapGesturePicture(_ gestureRecognizer: UITapGestureRecognizer) {
         guard tapGesturePictureImageView === gestureRecognizer else { return }
-        self.delegate?.didTapPictureImageView(imageCell: pictureView.image!)
+        self.delegate?.didTapPictureImageView(cell: self)
     }
     
     func clickedLikeSelectedCell() {

@@ -20,9 +20,10 @@ final class ProfileViewController: UIViewController {
     private lazy var heightHeaderInSection: CGFloat = 185
     private lazy var isExpanded = false
     private lazy var tapGestureRecognizer = UITapGestureRecognizer()
-    private lazy var swipeUpGestureRecognizer = UISwipeGestureRecognizer()
-    private lazy var swipeDownGestureRecognizer = UISwipeGestureRecognizer()
-    private lazy var tapGesture = UITapGestureRecognizer()
+    
+    static var currentImageFrame: CGRect?
+    
+    private let customTransitionDelegate = TransitionDelegate()
     
     private lazy var backgroundBigAvatarImageView: UIView = {
         var backgroundView = UIView()
@@ -54,11 +55,6 @@ final class ProfileViewController: UIViewController {
         closeButton.isUserInteractionEnabled = true
         closeButton.translatesAutoresizingMaskIntoConstraints = false
         return closeButton
-    }()
-        
-    private lazy var scrollImageView: ImageScrollView = {
-        let scrollImageView = ImageScrollView()
-        return scrollImageView
     }()
     
     private lazy var tableView: UITableView = {
@@ -97,23 +93,20 @@ final class ProfileViewController: UIViewController {
                                                                 style: .plain,
                                                                 target: self,
                                                                 action: #selector(logout(parameterSender:)))
+        //        self.navigationController?.navigationBar.isHidden = true
+        
     }
     
     private func setupView() {
         self.view.backgroundColor = .systemBackground
         self.title = "Профиль"
-        self.scrollImageView = ImageScrollView(frame: self.view.bounds)
-        self.scrollImageView.backgroundColor = .black
-        self.scrollImageView.alpha = 0
         self.view.addSubview(self.tableView)
         self.view.addSubview(self.backgroundBigAvatarImageView)
         self.view.addSubview(self.bigAvatarImageView)
         self.view.addSubview(self.closeButtonBigAvatarView)
-        self.view.addSubview(self.scrollImageView)
         self.view.bringSubviewToFront(self.backgroundBigAvatarImageView)
         self.view.bringSubviewToFront(self.bigAvatarImageView)
         self.view.bringSubviewToFront(self.closeButtonBigAvatarView)
-        self.view.bringSubviewToFront(self.scrollImageView)
     }
     
     private func setupConstraints() {
@@ -141,24 +134,13 @@ final class ProfileViewController: UIViewController {
             self.closeButtonBigAvatarView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor, constant: 5),
             self.closeButtonBigAvatarView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor, constant: -5),
             self.closeButtonBigAvatarView.heightAnchor.constraint(equalToConstant: 40),
-            self.closeButtonBigAvatarView.widthAnchor.constraint(equalToConstant: 40),
-                      
-            self.scrollImageView.topAnchor.constraint(equalTo: self.view.topAnchor),
-            self.scrollImageView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
-            self.scrollImageView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
-            self.scrollImageView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor)
+            self.closeButtonBigAvatarView.widthAnchor.constraint(equalToConstant: 40)
         ].compactMap({ $0 }))
     }
     
     private func setupGesture(){
-        tapGestureRecognizer.addTarget(self, action: #selector(handleTapGesture(_:)))
+        self.tapGestureRecognizer.addTarget(self, action: #selector(handleTapGesture(_:)))
         self.bigAvatarImageView.addGestureRecognizer(tapGestureRecognizer)
-        swipeUpGestureRecognizer.addTarget(self, action: #selector(handleSwipeGesture(_:)))
-        swipeUpGestureRecognizer.direction = .up
-        swipeDownGestureRecognizer.addTarget(self, action: #selector(handleSwipeGesture(_:)))
-        swipeDownGestureRecognizer.direction = .down
-        self.scrollImageView.addGestureRecognizer(swipeUpGestureRecognizer)
-        self.scrollImageView.addGestureRecognizer(swipeDownGestureRecognizer)
     }
     
     private func animationProfileImageView() {
@@ -186,28 +168,6 @@ final class ProfileViewController: UIViewController {
         animationProfileImageView()
     }
     
-    @objc func handleSwipeGesture(_ gestureRecognizer: UISwipeGestureRecognizer) {
-        print("swipe")
-        switch gestureRecognizer {
-        case swipeUpGestureRecognizer:
-            hiddenBigPostImageView()
-        case swipeDownGestureRecognizer:
-            hiddenBigPostImageView()
-        default:
-            return
-        }
-        
-        func hiddenBigPostImageView () {
-            UIView.animate(withDuration: 0.3) {
-                self.scrollImageView.alpha = 0
-                
-            } completion: { _ in
-                
-            }
-            self.tabBarController?.tabBar.isHidden = false
-        }
-    }
-                                                                
     @objc func logout(parameterSender: Any) {
         let alert = UIAlertController(title: "Вы действительно хотите выйти из аккаунта?",
                                       message: nil,
@@ -407,16 +367,45 @@ extension ProfileViewController: PostTableViewCellProtocol {
         }
     }
     
-    func didTapPictureImageView(imageCell: UIImage) {
-        print("work")
-        UIView.animate(withDuration: 0.3) {
-
-            self.scrollImageView.alpha = 1
-            self.scrollImageView.set(image: imageCell)
-            self.view.layoutIfNeeded()
-            
-            self.tabBarController?.tabBar.isHidden = true
+    func didTapPictureImageView(cell: PostTableViewCell) {
+        cell.pictureView.isUserInteractionEnabled = false
+        cell.pictureView.isHidden = true
+        
+        let fullScreenPhotoProfileVC = FullScreenPhotoProfileViewController()
+        fullScreenPhotoProfileVC.modalPresentationStyle = .fullScreen
+        fullScreenPhotoProfileVC.modalTransitionStyle = .crossDissolve
+        fullScreenPhotoProfileVC.image = cell.pictureView.image
+        self.customTransitionDelegate.imageView = cell.pictureView
+        
+        fullScreenPhotoProfileVC.transitioningDelegate = customTransitionDelegate
+        transitioningDelegate = customTransitionDelegate
+        self.present(fullScreenPhotoProfileVC, animated: true) {
+            cell.pictureView.isUserInteractionEnabled = true
+            cell.pictureView.isHidden = false
         }
+        
+        
+        //        let realCellPictureViewY76 = cell.borderView.frame.origin.y + cell.backView.frame.origin.y + cell.pictureView.frame.origin.y
+        
+        //        let rect = cell.convert(cell.pictureView.frame, to: self.view)
+        //        cell.customTransitionDelegate.imageView?.frame = CGRect(origin: CGPoint(x: rect.origin.x,
+        //                                                                                y: rect.origin.y + realCellPictureViewY76),
+        //                                                                size: rect.size)
+        
+        //        let cellRect = cell.convert(cell.pictureView.frame, to: self.view)
+        //
+        //        ProfileViewController.currentImageFrame = cell.pictureView.frame
+        //
+        
+        //        print(cell.customTransitionDelegate.imageView?.frame)
+        //        if let indexPath = tableView.indexPath(for: cell) {
+        //            let rectRow = self.tableView.rectForRow(at: indexPath)
+        //            let rectInScreen = self.tableView.convert(rectRow, to: self.view)
+        //            print("\n!!! rectRowInScreen - \(rectInScreen)\n")
+        //            let rectImage = cell.convert(cell.pictureView.frame, to: self.view)
+        //        }
+        
+
     }
 }
 

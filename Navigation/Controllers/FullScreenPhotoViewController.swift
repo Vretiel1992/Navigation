@@ -73,7 +73,6 @@ extension FullScreenPhotoViewController: UICollectionViewDataSource, UICollectio
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotosVCCell", for: indexPath) as? FullScreenPhotoCollectionViewCell else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DefaultCell", for: indexPath)
-            cell.backgroundColor = .red
             return cell
         }
         cell.backgroundColor = .systemGray6

@@ -17,6 +17,8 @@ class MainTabBarController: UITabBarController {
 //        return ProfileViewController()
 //    }
     
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .systemBackground
@@ -25,7 +27,9 @@ class MainTabBarController: UITabBarController {
         borderTabbar.frame = CGRect(x: 0.0, y: 0.0, width: UIScreen.main.bounds.width, height: thickness)
         borderTabbar.backgroundColor = UIColor.darkGray.cgColor
         self.tabBar.layer.addSublayer(borderTabbar)
+        
         setupTabBar()
+        
     }
     
     private func setupTabBar() {
