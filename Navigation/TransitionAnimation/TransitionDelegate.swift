@@ -8,31 +8,35 @@
 import UIKit
 
 class TransitionDelegate: NSObject, UIViewControllerTransitioningDelegate {
-    
+
+    // MARK: - Public Properties
+
     var imageView: UIImageView?
+    var realFrameTapImageViewCell: CGRect?
     var panGesture: UIPanGestureRecognizer?
     var useInteractiveDismiss: Bool = false
     var dismissVelocity: CGFloat = 1.0
-    
-    //MARK:-
-    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        
+
+    // MARK: - Protocol Functions
+
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController,
+                             source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+
         if let tappedImageView = imageView {
             let animator = ImageTransitionAnimator()
             animator.tappedImageView = tappedImageView
+            animator.realFrameTappedImageView = realFrameTapImageViewCell
             return animator
         } else {
             return nil
         }
     }
-    
-    //This example employs two types of dismiss: a non-interactive dismiss(tap dismiss button) and the
-    //interactive version which uses pan gesture
+
     func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        
-        if !useInteractiveDismiss{
+
+        if !useInteractiveDismiss {
             return nil
-        }else{
+        } else {
             let animator = ImageTransitionAnimator()
             animator.presenting = false
             animator.isDismissInteractive = true
@@ -41,21 +45,18 @@ class TransitionDelegate: NSObject, UIViewControllerTransitioningDelegate {
             return animator
         }
     }
-    
-    //MARK:-
-    
-    //Presenting Interactive Transition
-    //For our example, the presenting is not interactive, so we return nil
-    func interactionControllerForPresentation(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+
+    func interactionControllerForPresentation(using animator: UIViewControllerAnimatedTransitioning) ->
+    UIViewControllerInteractiveTransitioning? {
         return nil
     }
-    
-    //dismiss interaction
-    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-        
-        if !useInteractiveDismiss || panGesture == nil{
+
+    func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) ->
+    UIViewControllerInteractiveTransitioning? {
+
+        if !useInteractiveDismiss || panGesture == nil {
             return nil
-        }else{
+        } else {
             let interactiveController = InteractiveTransitionController()
             interactiveController.panGesture = panGesture
             return interactiveController

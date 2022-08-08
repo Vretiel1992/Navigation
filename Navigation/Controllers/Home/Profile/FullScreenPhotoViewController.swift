@@ -7,11 +7,15 @@
 
 import UIKit
 
-class FullScreenPhotoViewController: UIViewController {
-    
+final class FullScreenPhotoViewController: UIViewController {
+
+    // MARK: - Public Properties
+
     var photoGallery: PhotoGallery!
     var indexPath: IndexPath!
-    
+
+    // MARK: - Private Properties
+
     private lazy var layout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
@@ -19,7 +23,7 @@ class FullScreenPhotoViewController: UIViewController {
         layout.minimumLineSpacing = 0
         return layout
     }()
-    
+
     private lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.layout)
         collectionView.backgroundColor = .systemGray6
@@ -34,44 +38,51 @@ class FullScreenPhotoViewController: UIViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
     }()
-    
+
+    // MARK: - Lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .systemBackground
-        self.setupView()
-        self.setupConstraints()
-    
-        self.collectionView.performBatchUpdates(nil) { (result) in
+        setupViews()
+        setupConstraints()
+        collectionView.performBatchUpdates(nil) { (_) in
             self.collectionView.scrollToItem(at: self.indexPath, at: .centeredHorizontally, animated: false)
         }
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.isHidden = false
+        navigationController?.navigationBar.isHidden = false
     }
-    
-    private func setupView() {
-        self.view.addSubview(collectionView)
+
+    // MARK: - Private Methods
+
+    private func setupViews() {
+        view.backgroundColor = .systemBackground
+        view.addSubview(collectionView)
     }
-    
+
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            self.collectionView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
-            self.collectionView.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor),
-            self.collectionView.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
-            self.collectionView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor)
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
 }
 
-extension FullScreenPhotoViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+// MARK: - UICollectionViewDataSource
+
+extension FullScreenPhotoViewController: UICollectionViewDataSource {
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return photoGallery.images.count
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotosVCCell", for: indexPath) as? FullScreenPhotoCollectionViewCell else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotosVCCell",
+                                                            for: indexPath) as? FullScreenPhotoCollectionViewCell else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "DefaultCell", for: indexPath)
             return cell
         }
@@ -82,8 +93,14 @@ extension FullScreenPhotoViewController: UICollectionViewDataSource, UICollectio
         }
         return cell
     }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+}
+
+// MARK: - UICollectionViewDelegateFlowLayout
+
+extension FullScreenPhotoViewController: UICollectionViewDelegateFlowLayout {
+
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
         let frameVC = collectionView.frame
         let width = frameVC.width
         let height = frameVC.height

@@ -8,58 +8,70 @@
 import UIKit
 
 class RootViewController: UIViewController {
-    
+
+    // MARK: - Private Properties
+
     private var current: UIViewController
-    
+
+    // MARK: - Initializers
+
     init() {
-        self.current = LogInViewController()
+        current = LogInViewController()
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
+    // MARK: - Lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        addChild(self.current)
-        self.current.view.frame = view.bounds
-        view.addSubview(self.current.view)
-        self.current.didMove(toParent: self)
+        addChild(current)
+        current.view.frame = view.bounds
+        view.addSubview(current.view)
+        current.didMove(toParent: self)
     }
-    
+
+    // MARK: - Public Methods
+
     func switchToMainTabBarController() {
         let mainTabBarController = MainTabBarController()
         let new = mainTabBarController
         animateFadeTransition(to: new)
     }
-    
+
     func switchToLogInViewController() {
         let logInViewController = LogInViewController()
         let new = UINavigationController(rootViewController: logInViewController)
         animateDismissTransition(to: new)
     }
-    
+
+    // MARK: - Private Methods
+
     private func animateFadeTransition(to new: UIViewController, completion: (() -> Void)? = nil) {
-        self.current.willMove(toParent: nil)
+        current.willMove(toParent: nil)
         addChild(new)
-        transition(from: current, to: new, duration: 0.3, options: [.transitionCrossDissolve, .curveEaseOut], animations: {
-        }) { completed in
+        transition(from: current, to: new, duration: 0.3, options: [.transitionCrossDissolve, .curveEaseOut],
+                   animations: {
+        }) { _ in
             self.current.removeFromParent()
             new.didMove(toParent: self)
             self.current = new
             completion?()
         }
     }
-    
+
     private func animateDismissTransition(to new: UIViewController, completion: (() -> Void)? = nil) {
-        let initialFrame = CGRect(x: -UIScreen.main.bounds.width, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        let initialFrame = CGRect(x: -UIScreen.main.bounds.width, y: 0, width: UIScreen.main.bounds.width,
+                                  height: UIScreen.main.bounds.height)
         new.view.frame = initialFrame
         self.current.willMove(toParent: nil)
         addChild(new)
         transition(from: current, to: new, duration: 0.3, options: [], animations: {
             new.view.frame = self.view.bounds
-        }) { completed in
+        }) { _ in
             self.current.removeFromParent()
             new.didMove(toParent: self)
             self.current = new

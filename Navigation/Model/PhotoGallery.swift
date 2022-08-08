@@ -8,16 +8,22 @@
 import UIKit
 
 class PhotoGallery {
-    
+
+    // MARK: - Public Properties
+
     var images = [UIImage]()
-    
+
+    // MARK: - Initializers
+
     init() {
         setupGallery()
     }
-    
+
+    // MARK: - Public Methods
+
     func setupGallery() {
-        for i in 1...20 {
-            let image = UIImage(named: "\(i)")!
+        for imageName in 1...20 {
+            let image = UIImage(named: "\(imageName)")!
             images.append(image)
         }
     }

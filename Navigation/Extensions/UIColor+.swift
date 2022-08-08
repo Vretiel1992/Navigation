@@ -8,6 +8,7 @@
 import UIKit
 
 extension UIColor {
+
     static let customBackgroundAppOne = UIColor { traitCollection in
         switch traitCollection.userInterfaceStyle {
         case .dark:
@@ -16,7 +17,7 @@ extension UIColor {
             return UIColor.systemGray5
         }
     }
-    
+
     static let customBackgroundAppTwo = UIColor { traitCollection in
         switch traitCollection.userInterfaceStyle {
         case .dark:
@@ -25,7 +26,7 @@ extension UIColor {
             return UIColor.systemBackground
         }
     }
-    
+
     static let customBaseForegroundButton = UIColor { traitCollection in
         switch traitCollection.userInterfaceStyle {
         case .dark:
@@ -34,23 +35,13 @@ extension UIColor {
             return UIColor.darkGray
         }
     }
-    
+
     static let customBaseBackgroundButton = UIColor { traitCollection in
         switch traitCollection.userInterfaceStyle {
         case .dark:
-            return UIColor(r: 58, g: 38, b: 38)
+            return UIColor(red: 58 / 255, green: 38 / 255, blue: 38 / 255, alpha: 1)
         default:
-            return UIColor(r: 252, g: 241, b: 241)
+            return UIColor(red: 252 / 255, green: 241 / 255, blue: 241 / 255, alpha: 1)
         }
     }
-    
-    convenience init(r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat = 1) {
-        self.init(
-            red: r / 255.0,
-            green: g / 255.0,
-            blue: b / 255.0,
-            alpha: a
-        )
-    }
 }
-

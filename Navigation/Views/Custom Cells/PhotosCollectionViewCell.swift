@@ -8,6 +8,9 @@
 import UIKit
 
 class PhotosCollectionViewCell: UICollectionViewCell {
+
+    // MARK: - Private Properties
+
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
@@ -16,27 +19,33 @@ class PhotosCollectionViewCell: UICollectionViewCell {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
-    
+
+    // MARK: - Initializers
+
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.contentView.addSubview(self.imageView)
-        self.setupConstraints()
+        contentView.addSubview(imageView)
+        setupConstraints()
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
+    // MARK: - Public Methods
+
+    func setImage(name: UIImage) {
+        imageView.image = name
+    }
+
+    // MARK: - Private Methods
+
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            self.imageView.centerYAnchor.constraint(equalTo: self.contentView.centerYAnchor),
-            self.imageView.centerXAnchor.constraint(equalTo: self.contentView.centerXAnchor),
-            self.imageView.heightAnchor.constraint(equalTo: self.contentView.heightAnchor),
-            self.imageView.widthAnchor.constraint(equalTo: self.contentView.widthAnchor)
+            imageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            imageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            imageView.heightAnchor.constraint(equalTo: contentView.heightAnchor),
+            imageView.widthAnchor.constraint(equalTo: contentView.widthAnchor)
         ])
-    }
-    
-    func setImage(name: UIImage) {
-        self.imageView.image = name
     }
 }
