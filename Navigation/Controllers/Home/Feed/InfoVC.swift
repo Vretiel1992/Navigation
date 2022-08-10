@@ -1,5 +1,5 @@
 //
-//  InfoViewController.swift
+//  InfoVC.swift
 //  Navigation
 //
 //  Created by Антон Денисюк on 10.03.2022.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class InfoViewController: UIViewController {
+final class InfoVC: UIViewController {
 
     // MARK: - Private Properties
 

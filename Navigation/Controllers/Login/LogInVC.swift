@@ -1,5 +1,5 @@
 //
-//  LogInViewController.swift
+//  LogInVC.swift
 //  Navigation
 //
 //  Created by Антон Денисюк on 31.03.2022.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class LogInViewController: UIViewController {
+final class LogInVC: UIViewController {
 
     // MARK: - Private Properties
 
@@ -36,6 +36,7 @@ final class LogInViewController: UIViewController {
     private lazy var textFieldStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
+        stackView.backgroundColor = .systemGray6
         stackView.layer.borderWidth = 0.5
         stackView.layer.borderColor = UIColor.lightGray.cgColor
         stackView.layer.cornerRadius = 10
@@ -45,6 +46,13 @@ final class LogInViewController: UIViewController {
         return stackView
     }()
 
+    private lazy var separatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .lightGray
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+
     private lazy var loginTextField: UITextField = {
         let textField = UITextField()
         textField.backgroundColor = .systemGray6
@@ -52,10 +60,9 @@ final class LogInViewController: UIViewController {
         textField.indent(size: 10)
         textField.tintColor = UIColor(named: "colorLogoButton")
         textField.placeholder = "Введите email"
-        textField.layer.borderWidth = 0.5
-        textField.layer.borderColor = UIColor.lightGray.cgColor
         textField.clearButtonMode = .always
         textField.autocapitalizationType = .none
+        textField.delegate = self
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
@@ -70,6 +77,7 @@ final class LogInViewController: UIViewController {
         textField.clearButtonMode = .always
         textField.autocapitalizationType = .none
         textField.isSecureTextEntry = true
+        textField.delegate = self
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
@@ -90,6 +98,21 @@ final class LogInViewController: UIViewController {
                          for: .touchUpInside)
         return button
     }()
+
+    private lazy var invalidLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .left
+        label.textColor = .lightGray
+        label.font = .systemFont(ofSize: 12)
+        label.numberOfLines = 8
+        label.contentMode = .scaleToFill
+        label.textAlignment = .center
+        label.isHidden = true
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+
+    private lazy var validationData = ValidationData()
 
     // MARK: - Lifecycle
 
@@ -128,10 +151,10 @@ final class LogInViewController: UIViewController {
         contentView.addSubview(logoImage)
         contentView.addSubview(textFieldStackView)
         contentView.addSubview(displayButton)
+        contentView.addSubview(invalidLabel)
         textFieldStackView.addArrangedSubview(loginTextField)
         textFieldStackView.addArrangedSubview(passwordTextField)
-        loginTextField.delegate = self
-        passwordTextField.delegate = self
+        textFieldStackView.addSubview(separatorView)
     }
 
     private func setupConstraints() {
@@ -157,11 +180,21 @@ final class LogInViewController: UIViewController {
             textFieldStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             textFieldStackView.heightAnchor.constraint(equalToConstant: 100),
 
+            separatorView.centerXAnchor.constraint(equalTo: textFieldStackView.centerXAnchor),
+            separatorView.centerYAnchor.constraint(equalTo: textFieldStackView.centerYAnchor),
+            separatorView.leadingAnchor.constraint(equalTo: textFieldStackView.leadingAnchor),
+            separatorView.trailingAnchor.constraint(equalTo: textFieldStackView.trailingAnchor),
+            separatorView.heightAnchor.constraint(equalToConstant: 0.5),
+
             displayButton.topAnchor.constraint(equalTo: textFieldStackView.bottomAnchor, constant: 30),
             displayButton.leadingAnchor.constraint(equalTo: textFieldStackView.leadingAnchor),
             displayButton.trailingAnchor.constraint(equalTo: textFieldStackView.trailingAnchor),
             displayButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            displayButton.heightAnchor.constraint(equalToConstant: 50)
+            displayButton.heightAnchor.constraint(equalToConstant: 50),
+
+            invalidLabel.topAnchor.constraint(equalTo: displayButton.bottomAnchor),
+            invalidLabel.leadingAnchor.constraint(equalTo: displayButton.leadingAnchor),
+            invalidLabel.trailingAnchor.constraint(equalTo: displayButton.trailingAnchor)
         ])
     }
 
@@ -169,6 +202,18 @@ final class LogInViewController: UIViewController {
         let tapGesture = UITapGestureRecognizer(target: self,
                                                 action: #selector(self.tap(gesture:)))
         view.addGestureRecognizer(tapGesture)
+    }
+
+    private func validEmail(email: String) -> Bool {
+        let emailReg = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let validEmail = NSPredicate(format: "SELF MATCHES %@", emailReg)
+        return validEmail.evaluate(with: email)
+    }
+
+    private func validPassword(password: String) -> Bool {
+        let passwordReg =  ("(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z])(?=.*[@#$%^&*]).{8,}")
+        let passwordTesting = NSPredicate(format: "SELF MATCHES %@", passwordReg)
+        return passwordTesting.evaluate(with: password) && password.count > 6
     }
 
     // MARK: - Object Methods
@@ -197,13 +242,43 @@ final class LogInViewController: UIViewController {
     }
 
     @objc private func switchToMainTabBarController(parameterSender: Any) {
-        SceneDelegate.shared?.rootViewController.switchToMainTabBarController()
+        guard let email = loginTextField.text else {return}
+        guard let password = passwordTextField.text else {return}
+        let enteredEmail = validEmail(email: email)
+        let enteredPassword = validPassword(password: password)
+
+        if email.isEmpty && password.isEmpty {
+            loginTextField.shake()
+            passwordTextField.shake()
+        } else if email.isEmpty {
+            loginTextField.shake()
+        } else if password.isEmpty {
+            passwordTextField.shake()
+        } else {
+            if !enteredPassword && !enteredEmail {
+                invalidLabel.text = validationData.invalidEmailAndPassword
+                invalidLabel.isHidden = false
+                passwordTextField.shake()
+                loginTextField.shake()
+            } else if !enteredPassword {
+                invalidLabel.text = validationData.invalidPassword
+                invalidLabel.isHidden = false
+                passwordTextField.shake()
+            } else if !enteredEmail {
+                invalidLabel.text = validationData.invalidEmail
+                invalidLabel.isHidden = false
+                loginTextField.shake()
+            } else {
+                SceneDelegate.shared?.rootViewController.switchToMainTabBarController()
+                invalidLabel.isHidden = true
+            }
+        }
     }
 }
 
 // MARK: - UITextFieldDelegate
 
-extension LogInViewController: UITextFieldDelegate {
+extension LogInVC: UITextFieldDelegate {
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         loginTextField.resignFirstResponder()

@@ -1,5 +1,5 @@
 //
-//  FeedViewController.swift
+//  FeedVC.swift
 //  Navigation
 //
 //  Created by Антон Денисюк on 07.03.2022.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class FeedViewController: UIViewController {
+final class FeedVC: UIViewController {
 
     // MARK: - Private Properties
 
@@ -57,7 +57,7 @@ final class FeedViewController: UIViewController {
     // MARK: - Object Methods
 
     @objc func performDisplayVC(parameterSender: Any) {
-        let postViewController = PostViewController()
+        let postViewController = PostVC()
         navigationController?.pushViewController(postViewController, animated: true)
     }
 }

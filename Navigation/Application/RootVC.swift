@@ -1,5 +1,5 @@
 //
-//  RootViewController.swift
+//  RootVC.swift
 //  Navigation
 //
 //  Created by Антон Денисюк on 07.07.2022.
@@ -7,7 +7,11 @@
 
 import UIKit
 
-class RootViewController: UIViewController {
+class RootVC: UIViewController {
+
+    override var childForStatusBarHidden: UIViewController? {
+        children.last
+    }
 
     // MARK: - Private Properties
 
@@ -16,7 +20,7 @@ class RootViewController: UIViewController {
     // MARK: - Initializers
 
     init() {
-        current = LogInViewController()
+        current = LogInVC()
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -43,7 +47,7 @@ class RootViewController: UIViewController {
     }
 
     func switchToLogInViewController() {
-        let logInViewController = LogInViewController()
+        let logInViewController = LogInVC()
         let new = UINavigationController(rootViewController: logInViewController)
         animateDismissTransition(to: new)
     }

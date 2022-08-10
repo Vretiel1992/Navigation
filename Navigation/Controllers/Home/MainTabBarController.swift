@@ -21,10 +21,10 @@ final class MainTabBarController: UITabBarController {
 
     private func setupTabBar() {
         view.backgroundColor = .systemBackground
-        let profileViewController = createNavController(viewController: ProfileViewController(),
+        let profileViewController = createNavController(viewController: ProfileVC(),
                                                         itemName: "Профиль",
                                                         itemImage: "person.circle")
-        let feedViewController = createNavController(viewController: FeedViewController(),
+        let feedViewController = createNavController(viewController: FeedVC(),
                                                      itemName: "Лента",
                                                      itemImage: "house")
         viewControllers = [profileViewController, feedViewController]

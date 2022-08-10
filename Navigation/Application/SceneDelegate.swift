@@ -17,7 +17,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         SceneDelegate.shared = self
         guard let windowsScene = (scene as? UIWindowScene) else { return }
         let window = UIWindow(windowScene: windowsScene)
-        window.rootViewController = RootViewController()
+        window.rootViewController = RootVC()
         window.makeKeyAndVisible()
         self.window = window
     }
@@ -27,7 +27,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 extension SceneDelegate {
     static weak var shared: SceneDelegate?
 
-    var rootViewController: RootViewController {
-        return window?.rootViewController as! RootViewController
+    var rootViewController: RootVC {
+        return window?.rootViewController as! RootVC
     }
 }

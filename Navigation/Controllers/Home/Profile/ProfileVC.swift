@@ -1,5 +1,5 @@
 //
-//  ProfileViewController.swift
+//  ProfileVC.swift
 //  Navigation
 //
 //  Created by Антон Денисюк on 07.03.2022.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ProfileViewController: UIViewController {
+final class ProfileVC: UIViewController {
 
     // MARK: - Private Properties
 
@@ -187,7 +187,7 @@ final class ProfileViewController: UIViewController {
 
 // MARK: - UITableViewDataSource
 
-extension ProfileViewController: UITableViewDataSource {
+extension ProfileVC: UITableViewDataSource {
 
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
@@ -234,7 +234,7 @@ extension ProfileViewController: UITableViewDataSource {
 
 // MARK: - UITableViewDelegate
 
-extension ProfileViewController: UITableViewDelegate {
+extension ProfileVC: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard section == 0 else { return nil }
@@ -254,7 +254,7 @@ extension ProfileViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard indexPath.section == 0 else { return }
-        let photoVC = PhotosViewController()
+        let photoVC = PhotosVC()
         navigationController?.pushViewController(photoVC, animated: true)
         tableView.deselectRow(at: indexPath, animated: false)
     }
@@ -262,7 +262,7 @@ extension ProfileViewController: UITableViewDelegate {
 
 // MARK: - ProfileHeaderViewProtocol
 
-extension ProfileViewController: ProfileHeaderViewProtocol {
+extension ProfileVC: ProfileHeaderViewProtocol {
 
     func didTapStatusButton(textFieldIsVisible: Bool, completion: @escaping () -> Void) {
         heightHeaderInSection = textFieldIsVisible ? 235 : 185
@@ -283,7 +283,7 @@ extension ProfileViewController: ProfileHeaderViewProtocol {
 
 // MARK: - PostTableViewCellProtocol
 
-extension ProfileViewController: PostTableViewCellProtocol {
+extension ProfileVC: PostTableViewCellProtocol {
 
     func didTapDescriptionTextView(cell: PostTableViewCell) {
         guard let text = cell.descriptionTextView.attributedText?.string else { return }
@@ -378,7 +378,7 @@ extension ProfileViewController: PostTableViewCellProtocol {
         cell.pictureView.isUserInteractionEnabled = false
         cell.pictureView.isHidden = true
         let realFramePictureViewCell = cell.convert(cell.pictureView.frame, to: self.view)
-        let fullScreenPhotoProfileVC = FullScreenPhotoProfileViewController()
+        let fullScreenPhotoProfileVC = FullScreenPhotoProfileVC()
         fullScreenPhotoProfileVC.modalPresentationStyle = .fullScreen
         fullScreenPhotoProfileVC.modalTransitionStyle = .crossDissolve
         fullScreenPhotoProfileVC.image = cell.pictureView.image

@@ -9,9 +9,9 @@ import UIKit
 
 class PhotosCollectionViewCell: UICollectionViewCell {
 
-    // MARK: - Private Properties
+    // MARK: - Public Properties
 
-    private lazy var imageView: UIImageView = {
+    lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 6

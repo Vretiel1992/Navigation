@@ -1,5 +1,5 @@
 //
-//  FullScreenPhotoProfileViewController.swift
+//  FullScreenPhotoProfileVC.swift
 //  Navigation
 //
 //  Created by Антон Денисюк on 26.07.2022.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class FullScreenPhotoProfileViewController: UIViewController {
+final class FullScreenPhotoProfileVC: UIViewController {
 
     // MARK: - Public Properties
 
@@ -15,6 +15,10 @@ final class FullScreenPhotoProfileViewController: UIViewController {
     var scrollView: ImageScrollView!
     var useInteractiveDismiss = false
     var panGesture = UIPanGestureRecognizer()
+
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
 
     // MARK: - Lifecycle
 
@@ -41,7 +45,7 @@ final class FullScreenPhotoProfileViewController: UIViewController {
         scrollView.set(image: image!)
         scrollView.imageZoomView.contentMode = .scaleAspectFit
         scrollView.contentInsetAdjustmentBehavior = .never
-    view.addSubview(scrollView)
+        view.addSubview(scrollView)
     }
 
     private func setupPanGesture() {
@@ -90,7 +94,7 @@ final class FullScreenPhotoProfileViewController: UIViewController {
 
 // MARK: - UIGestureRecognizerDelegate
 
-extension FullScreenPhotoProfileViewController: UIGestureRecognizerDelegate {
+extension FullScreenPhotoProfileVC: UIGestureRecognizerDelegate {
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
                            shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {

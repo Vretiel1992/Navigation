@@ -1,5 +1,5 @@
 //
-//  PostViewController.swift
+//  PostVC.swift
 //  Navigation
 //
 //  Created by Антон Денисюк on 08.03.2022.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class PostViewController: UIViewController {
+final class PostVC: UIViewController {
 
     // MARK: - Lifecycle
 
@@ -30,7 +30,7 @@ final class PostViewController: UIViewController {
     // MARK: - Object Methods
 
     @objc func performDisplayVC(parameterSender: Any) {
-        let infoViewController = InfoViewController()
+        let infoViewController = InfoVC()
         present(infoViewController, animated: true, completion: nil)
     }
 }

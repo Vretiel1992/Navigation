@@ -27,7 +27,7 @@ class ImageScrollView: UIScrollView {
         self.delegate = self
         self.showsVerticalScrollIndicator = false
         self.showsHorizontalScrollIndicator = false
-        self.decelerationRate = UIScrollView.DecelerationRate.fast
+        self.decelerationRate = .normal
     }
 
     required init?(coder: NSCoder) {
